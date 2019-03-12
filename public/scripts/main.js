@@ -1,4 +1,0 @@
-function navToPage( page )
-{
-    
-}

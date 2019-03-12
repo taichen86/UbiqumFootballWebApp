@@ -16,9 +16,9 @@
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
         <!-- jQuery Mobile -->
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+        <!-- <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script> -->
 
         <!-- bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        <!-- <link rel="stylesheet" href="main.css"> -->
@@ -26,10 +26,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         
-        <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         
         <link rel="stylesheet" href="styles/main.css">
         <link href="https://fonts.googleapis.com/css?family=Overpass" rel="stylesheet">
+
+
 
     </head>
 
@@ -38,8 +40,32 @@
         <div class="container">
 
 
+        <section id="chat-messages">
+            <div id="user-id-text"></div>
+            <div id="signed-out-text"></div>
 
-        <div data-role="page" id="games-schedule">
+            <div id="chat-signed-in-content">
+
+                <div id="vue-instance">
+                    <div v-for="msg in messagesToShow">
+                        {{ msg.body }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-9">
+                        <input type="text" id="message-input" placeholder="Type a message" />
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-info" onclick="PrepareNewPost()">SEND</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <section id="games-schedule">
 
             <div data-role="header">
                 <div class="row top-buffer-20">
@@ -52,73 +78,43 @@
                     </div>
                 </div>
             </div> <!-- header -->
-
-            <!-- <div class="d-flex flex-column top-buffer-20">
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/01 - U1 and U4</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/01 - U3 and U2</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/08 - U5 and U6</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/08 - U6 and U1</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/15 - U2 and U4</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/15 - U3 and U5</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/22 - U1 and U3</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/22 - U2 and U6</button>
-                </div>
-                <div>
-                    <button type="button" class="btn btn-outline-secondary full-width game-btn">9/29 - U4 and U5</button>
-                </div>
-            </div> -->
-
+              
             <div class="w3-row">
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/01 - U1 and U4</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/01 - U3 and U2</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/08 - U5 and U6</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/08 - U6 and U1</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/15 - U2 and U4</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/15 - U3 and U5</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/22 - U1 and U3</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/22 - U2 and U6</button>
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        TEST</button>
+                        9/29 - U4 and U5</button>
                 </div>
                         
 
@@ -127,11 +123,11 @@
 
             <div style="height: 200px;">spacing</div>
 
-        </div><!-- games-schedule PAGE-->
+        </section><!-- games-schedule PAGE-->
 
 
 
-        <div data-role="page" id="game-page-full">
+        <section id="game-page-full">
 
             <div data-role="header">
                 <div class="row top-buffer-20">
@@ -145,86 +141,55 @@
                 </div>
             </div><!-- header -->
 
-                <div class="top-buffer-20">
+            <div class="top-buffer-20">
 
-                    <div class="w3-row">
-                        <div id="side-menu" class="w3-col m4">
-                            <div class="d-flex flex-column top-buffer-20">
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U1 and U4</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U3 and U2</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U5 and U6</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U6 and U1</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U2 and U4</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U3 and U5</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U1 and U3</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U2 and U6</button>
-                                <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/29 - U4 and U5</button>
-                            </div>
+                    <div class="d-flex"> 
+                    <div id="side-menu">
+                        <div class="d-flex flex-column top-buffer-20">
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U1 and U4</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U3 and U2</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U5 and U6</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U6 and U1</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U2 and U4</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U3 and U5</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U1 and U3</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U2 and U6</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/29 - U4 and U5</button>
                         </div>
-
-                        <div class="w3-col m8">
-                            <div id="game-info-table">
-                                <h3>Game Information</h3>
-                                <table class="table">
-                                    <tr><th>Date</th><th>Team</th><th>Location</th><th>Time</th></tr>
-                                    <tr>
-                                        <td>9/01</td>
-                                        <td>U1 and U4</td>
-                                        <td>AJ Katzenmaier</td>
-                                        <td>9:30 a.m.</td>
-                                    </tr>
-                                </table>
-                                <div class="top-buffer-20 embed-responsive embed-responsive-16by9">
-                                    <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448552.6749552238!2d-88.49171896625712!3d42.28242524926708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880f932fbc6ba7cd%3A0xcf2bbe275c6da815!2sA+J+Katzenmaier+Elementary+School!5e0!3m2!1sen!2ses!4v1551952624949" allowfullscreen></iframe>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
-
-
-
-                    <!-- <div class="d-flex"> 
-                        <div class="right-buffer-20">
-                            <div id="side-menu">
-                                <div class="d-flex flex-column top-buffer-20">
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U1 and U4</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U3 and U2</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U5 and U6</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U6 and U1</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U2 and U4</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U3 and U5</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U1 and U3</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U2 and U6</button>
-                                    <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/29 - U4 and U5</button>
-                                </div>
-                            </div>
-                        </div>
-            
-                        <div id="game-info-table">
-                            <h3>Game Information</h3>
-                            <table class="table">
-                                <tr><th>Date</th><th>Team</th><th>Location</th><th>Time</th></tr>
+        
+                    <div id="game-info-table">
+                        <!-- <h3>Game Information</h3> -->
+                        <table class="table">
                                 <tr>
-                                    <td>9/01</td>
-                                    <td>U1 and U4</td>
-                                    <td>AJ Katzenmaier</td>
-                                    <td>9:30 a.m.</td>
-                                </tr>
-                            </table>
-                            <div class="top-buffer-20 embed-responsive embed-responsive-16by9">
-                                <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448552.6749552238!2d-88.49171896625712!3d42.28242524926708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880f932fbc6ba7cd%3A0xcf2bbe275c6da815!2sA+J+Katzenmaier+Elementary+School!5e0!3m2!1sen!2ses!4v1551952624949" allowfullscreen></iframe>
-                            </div>
+                                <th>DATE</th>
+                                <td>9/01</td>
+                            </tr>
+                            <tr>
+                                <th>TEAM</th>
+                                <td>U1 and U4</td>
+                            </tr>
+                            <tr>
+                                <th>LOCATION</th>
+                                <td>AJ Katzenmaier</td>
+                            </tr>
+                            <tr>
+                                <th>TIME</th>
+                                <td>9:30 a.m.</td>
+                            </tr>
+                        </table>
+                        <div class="top-buffer-20 embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448552.6749552238!2d-88.49171896625712!3d42.28242524926708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880f932fbc6ba7cd%3A0xcf2bbe275c6da815!2sA+J+Katzenmaier+Elementary+School!5e0!3m2!1sen!2ses!4v1551952624949" allowfullscreen></iframe>
                         </div>
-                    </div>      -->
+                    </div>
+                </div>      
+
+            </div>
+        </section> <!-- game-page-full -->
 
 
-
-
-                </div>
-            </div> <!-- game-page-full -->
-
-        </div> <!-- container -->
+    
+    </div> <!-- container -->
 
 
 
@@ -232,22 +197,17 @@
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="#games-schedule" onclick="navToPage('schedule')" >SCHEDULE</a>
+                    <a class="nav-link" href="#games-schedule" onclick="navigateTo('games-schedule')" >SCHEDULE</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#game-page-full" onclick="navToPage('map')">MAP</a>
+                    <a class="nav-link" href="#game-page-full" onclick="navigateTo('game-page-full')">MAP</a>
                 </li>
-                <!-- 
-                <li class="nav-item">
-                <a class="nav-link" href="#" onclick="navToPage('schedule')">SCHEDULE</a>
+                <li>
+                    <button id="sign-in-button">Sign in</button>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="navToPage('about')">ABOUT</a>
+                <li>
+                  <button id="sign-out-button">Sign out</button>
                 </li>
-                <li class="nav-item">
-                <a class="nav-link" href="#" onclick="navToPage('registration')">REGISTRATION</a>
-                </li> -->
-     
             </ul>
         </nav>
 
@@ -266,13 +226,11 @@
                 messagingSenderId: "973755810038"
             };
             firebase.initializeApp(config);
-          
-            if (window.navigator.standalone) {
-                // The app is running in standalone mode.
-                console.log( 'IS STANDALONE');
-            }
         </script>
-        <script src="scripts/main.js"></script>
+
+        <script src="js/vue-instance.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/internal.js"></script>
 
 
     </body>

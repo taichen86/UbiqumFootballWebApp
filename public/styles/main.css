@@ -26,48 +26,24 @@
     flex-grow: 2;
 }
 
-@media screen and (min-width: 760px) {
-    body{
-        font-size: 1.2em;
-    }
-    .title-text{
-        font-size: 2.2em;
-    }
-    .game-btn{
-        height: 80px;
-        font-size: 1.5em;
-    }
-  }
 
-
-  @media screen and (max-width: 400px) {
-    .title-text{
-        font-size: 1.2em;
-    }
-
-  }
-
-  @media screen and (min-width: 760px) {
-    .game-btn-side{
-        height: 50px;
-        font-size: 1.2em;
-
-    }
-  }
-
-  @media screen and (min-width: 1000px) {
-    .title-text{
-        font-size: 2.5em;
-    }
-
-  }
-
-
-  @media screen and (max-width: 600px) and (orientation: portrait) {
+@media screen and (orientation: portrait) {
     #side-menu{
         display: none;
     }
-  }
+}
+
+#chat-messages{
+    display: none;
+}
+
+#game-page-full{
+    display: none;
+}
+
+#games-schedule{
+
+}
 
 
 
