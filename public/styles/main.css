@@ -47,4 +47,17 @@
 
 
 
+.chat-profile-pic{
+    width: 100%;
+}
 
+
+#username{
+    color: white;
+    vertical-align: middle;
+    display: table-cell;
+}
+
+.message-box{
+    margin: 4px 0;
+}

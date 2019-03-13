@@ -2,7 +2,7 @@ var currentUser;
 
 let signInButton = document.getElementById( 'sign-in-button' );
 let signOutButton = document.getElementById( 'sign-out-button' );
-
+let navMessagesButton = document.getElementById( 'nav-messages-button' );
 
 function GoogleSignIn()
 {
@@ -16,7 +16,7 @@ function GoogleSignIn()
       // The signed-in user info.
       var user = result.user;
       console.log( 'result user ' + result.user );
-      document.getElementById( 'user-id-text' ).innerHTML = result.user.displayName;
+      document.getElementById( 'username' ).innerHTML = result.user.displayName;
       // ...
     }).catch(function(error) {
       // Handle Errors here.
@@ -27,10 +27,11 @@ function GoogleSignIn()
       // The firebase.auth.AuthCredential type that was used.
       var credential = error.credential;
       // ...
+      console.log( 'login error: ' + error );
     });
 
-    navigateTo( 'chat-messages' );
-    GetPosts();
+    // navigateTo( 'chat-messages' );
+    
 }
 
 function GoogleSignOut()
@@ -39,7 +40,7 @@ function GoogleSignOut()
     firebase.auth().signOut().then(function() {
       // Sign-out successful.
       console.log( 'sign out successful' );
-      document.getElementById( 'signed-out-text' ).innerHTML = "SIGNED OUT";
+      // document.getElementById( 'signed-out-text' ).innerHTML = "SIGNED OUT";
 
     }).catch(function(error) {
       // An error happened.
@@ -62,6 +63,7 @@ function GetPosts()
 function updateAllPosts( snapshot )
 {
     console.log( 'snpashot val --> ' + snapshot );
+    vm.messagesToShow = [];
     snapshot.forEach( function(childSnapShot){
         console.log( childSnapShot.key);
         console.log( childSnapShot.val());
@@ -86,6 +88,7 @@ function writeUserData( userId, name, email, imageUrl)
  */
 function onAuthStateChanged( user ) {
   console.log( 'onAuthStateChanged ' + user );
+  document.getElementById( 'error-text' ).style.display = 'none';
 
   if( user ) 
   {
@@ -99,13 +102,17 @@ function onAuthStateChanged( user ) {
 
     currentUser = user;
     writeUserData( user.uid, user.displayName, user.email, user.photoURL );
+    GetPosts();
 
   } else {
     // Set currentUID to null.
     currentUser = null;
     // Display the splash page where you can sign-in.
     console.log( 'user null' );
-    document.getElementById( 'user-id-text' ).innerHTML = 'USER IS NULL';  }
+    document.getElementById( 'error-text' ).innerHTML = 'no user found';
+    document.getElementById( 'error-text' ).style.display = 'block';
+
+  }
 }
 
 
@@ -166,11 +173,10 @@ window.addEventListener( 'load', function() {
   // signOutButton.addEventListener( 'click', function() {
   //   firebase.auth().signOut();
   // });
-
-  signInButton.addEventListener( 'click', GoogleSignIn );
-  signOutButton.addEventListener( 'click', GoogleSignOut );
-  // Listen for auth state changes
-  firebase.auth().onAuthStateChanged(onAuthStateChanged);
+    signInButton.addEventListener( 'click', GoogleSignIn );
+    signOutButton.addEventListener( 'click', GoogleSignOut );
+    // Listen for auth state changes
+    firebase.auth().onAuthStateChanged(onAuthStateChanged);
 
   // Saves message on form submit.
   // messageForm.onsubmit = function(e) {
@@ -203,3 +209,39 @@ window.addEventListener( 'load', function() {
   // };
   // recentMenuButton.onclick();
 }, false);
+
+
+var currentSectionID = 'games-schedule';
+function navigateTo( id )
+{
+    console.log( 'go to page: ' + id );
+    document.getElementById( 'navbar-main' ).style.display = 'block';
+    document.getElementById( currentSectionID ).style.display = 'none';
+    document.getElementById( id ).style.display = 'block';
+    currentSectionID = id;
+}
+
+function goToMessagesPage()
+{
+    
+    navigateTo( 'chat-messages' );
+    document.getElementById( 'navbar-main' ).style.display = 'none';
+
+    if( currentUser ) // SIGNED IN
+    {
+        document.getElementById( 'message-input-bar' ).style.display = 'inline-flex';
+        document.getElementById('sign-in-button').style.display = 'none';
+        document.getElementById('sign-out-button').style.display = 'block';
+        document.getElementById( 'username' ).innerHTML = currentUser.displayName;
+
+    }else{ // SIGNED OUT
+
+      document.getElementById( 'message-input-bar' ).style.display = 'none';
+      document.getElementById('sign-out-button').style.display = 'none';
+      document.getElementById('sign-in-button').style.display = 'block';
+      document.getElementById( 'username' ).innerHTML = '';
+      
+
+    }
+}
+

@@ -41,18 +41,44 @@
 
 
         <section id="chat-messages">
-            <div id="user-id-text"></div>
-            <div id="signed-out-text"></div>
+            <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+                <table><tr><td><h5 id="username"></h5></td></tr></table>
+                
+
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button id="sign-in-button">Sign in</button>
+                        <button id="sign-out-button">Sign out</button>
+                    </li>
+                    
+                </ul>
+            </nav>
+
+            <div class="alert alert-danger" role="alert" id="error-text">
+                </div>
+
+            <div class="alert alert-light" role="alert" id="signed-out-text">
+                    Please sign in to see chat messages.
+                  </div>
 
             <div id="chat-signed-in-content">
 
                 <div id="vue-instance">
                     <div v-for="msg in messagesToShow">
-                        {{ msg.body }}
+                        <div class="row message-box">
+                            <div class="col-3">
+                                <img v-bind:src=msg.authorPic alt="avatar" class="full-width rounded-circle">
+                            </div>
+                            <div class="col-9">
+                                <h6 class="font-weight-bold"> {{ msg.author }} </h6>
+                                <h5> {{ msg.body }} </h5>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row fixed-bottom" id="message-input-bar">
                     <div class="col-9">
                         <input type="text" id="message-input" placeholder="Type a message" />
                     </div>
@@ -194,7 +220,7 @@
 
 
         <!-- FOOTER MENU -->
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar-main">
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="#games-schedule" onclick="navigateTo('games-schedule')" >SCHEDULE</a>
@@ -202,12 +228,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#game-page-full" onclick="navigateTo('game-page-full')">MAP</a>
                 </li>
-                <li>
-                    <button id="sign-in-button">Sign in</button>
+                <li class="nav-item" id='nav-messages-button'>
+                    <a class="nav-link" href="#chat-messages" onclick="goToMessagesPage()">MESSAGES</a>
                 </li>
-                <li>
-                  <button id="sign-out-button">Sign out</button>
-                </li>
+            
             </ul>
         </nav>
 
@@ -229,8 +253,9 @@
         </script>
 
         <script src="js/vue-instance.js"></script>
+        <!-- <script src="js/internal.js"></script> -->
         <script src="js/main.js"></script>
-        <script src="js/internal.js"></script>
+
 
 
     </body>
