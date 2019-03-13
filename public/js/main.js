@@ -127,19 +127,20 @@ function PrepareNewPost()
     const message = document.getElementById( 'message-input' ).value;
     console.log( 'post message...' + message );
     console.log( currentUser );
-    writeNewPost( currentUser.uid, currentUser.displayName, currentUser.photoURL, message );
+    writeNewPost( currentUser.uid, currentUser.displayName, currentUser.photoURL, message , vm.gameSelected.id );
     document.getElementById( 'message-input' ).value = '';
 }
 
-function writeNewPost( uid, username, picture, message ) 
+function writeNewPost( uid, username, picture, message, gameid ) 
 {
     // A post entry.
     let postData = 
     {
-      uid: uid,
-      author: username,
-      authorPic: picture,
-      body: message
+        uid: uid,
+        author: username,
+        authorPic: picture,
+        body: message,
+        gameid: gameid
     };
     console.log( 'post data: ' + postData.uid );
     console.log( 'post data: ' + postData.author );
@@ -170,8 +171,9 @@ function writeUserData( userId, name, email, imageUrl ) {
 // Bindings on load.
 window.addEventListener( 'load', function() {
   
-    vm.gamesToShow = localGameData.games;
-    console.log( vm.gamesToShow );
+    console.log( 'event listner' );
+    vm.allGames = localGameData.games;
+    console.log( vm.allGames );
 
 
     signInButton.addEventListener( 'click', GoogleSignIn );

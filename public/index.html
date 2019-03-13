@@ -126,7 +126,7 @@
               
             <div class="w3-row">
 
-                <div class="w3-col m6" v-for="game in gamesToShow">
+                <div class="w3-col m6" v-for="game in allGames">
                     <button v-on:click="goToGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn">
                         {{ game.date }} {{ game.teams }}</button>
                 </div>
@@ -197,7 +197,7 @@
                     <div class="d-flex"> 
                     <div id="side-menu">
                         <div class="d-flex flex-column top-buffer-20">
-                            <button v-for="game in gamesToShow"  v-on:click="goToGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn-side">
+                            <button v-for="game in allGames"  v-on:click="goToGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn-side">
                                 {{ game.date }} {{ game.teams }}</button>
                             <!-- <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U1 and U4</button>
                             <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U3 and U2</button>
