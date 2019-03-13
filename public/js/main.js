@@ -8,15 +8,14 @@ function GoogleSignIn()
 {
     console.log( 'google sign in...' );
     let provider = new firebase.auth.GoogleAuthProvider();
-    console.log( 'provider: ' + provider );
-
     firebase.auth().signInWithPopup(provider).then(function(result) {
       // This gives you a Google Access Token. You can use it to access the Google API.
       var token = result.credential.accessToken;
       // The signed-in user info.
       var user = result.user;
       console.log( 'result user ' + result.user );
-      document.getElementById( 'username' ).innerHTML = result.user.displayName;
+      // document.getElementById( 'username' ).innerHTML = result.user.displayName;
+
       // ...
     }).catch(function(error) {
       // Handle Errors here.
@@ -28,24 +27,29 @@ function GoogleSignIn()
       var credential = error.credential;
       // ...
       console.log( 'login error: ' + error );
+      document.getElementById( 'error-text' ).innerHTML = error;
+      document.getElementById( 'error-text' ).style.display = 'block';
+
     });
 
-    // navigateTo( 'chat-messages' );
     
 }
+
 
 function GoogleSignOut()
 {
     console.log( 'google sign out...' );
+    ShowSignedOutPage();
+
     firebase.auth().signOut().then(function() {
       // Sign-out successful.
       console.log( 'sign out successful' );
-      // document.getElementById( 'signed-out-text' ).innerHTML = "SIGNED OUT";
 
     }).catch(function(error) {
       // An error happened.
       console.log( 'sign out error ' + error );
       document.getElementById( 'error-text' ).innerHTML = error;
+      document.getElementById( 'error-text' ).style.display = 'block';
 
     });
 }
@@ -89,10 +93,10 @@ function writeUserData( userId, name, email, imageUrl)
 function onAuthStateChanged( user ) {
   console.log( 'onAuthStateChanged ' + user );
   document.getElementById( 'error-text' ).style.display = 'none';
+  console.log( 'hide error text' );
 
   if( user ) 
   {
-    document.getElementById( 'signed-out-text' ).innerHTML = "";
 
   // We ignore token refresh events.
     if( currentUser && user.uid === currentUser.uid ){
@@ -101,6 +105,8 @@ function onAuthStateChanged( user ) {
     }
 
     currentUser = user;
+    ShowSignedInPage();
+
     writeUserData( user.uid, user.displayName, user.email, user.photoURL );
     GetPosts();
 
@@ -109,8 +115,8 @@ function onAuthStateChanged( user ) {
     currentUser = null;
     // Display the splash page where you can sign-in.
     console.log( 'user null' );
-    document.getElementById( 'error-text' ).innerHTML = 'no user found';
-    document.getElementById( 'error-text' ).style.display = 'block';
+    // document.getElementById( 'error-text' ).innerHTML = 'no user found';
+    // document.getElementById( 'error-text' ).style.display = 'block';
 
   }
 }
@@ -163,59 +169,33 @@ function writeUserData( userId, name, email, imageUrl ) {
 
 // Bindings on load.
 window.addEventListener( 'load', function() {
-  // Bind Sign in button.
-  // signInButton.addEventListener( 'click', function() {
-  //   var provider = new firebase.auth.GoogleAuthProvider();
-  //   firebase.auth().signInWithPopup(provider);
-  // });
 
-  // Bind Sign out button.
-  // signOutButton.addEventListener( 'click', function() {
-  //   firebase.auth().signOut();
-  // });
     signInButton.addEventListener( 'click', GoogleSignIn );
     signOutButton.addEventListener( 'click', GoogleSignOut );
     // Listen for auth state changes
     firebase.auth().onAuthStateChanged(onAuthStateChanged);
 
-  // Saves message on form submit.
-  // messageForm.onsubmit = function(e) {
-  //   e.preventDefault();
-  //   var text = messageInput.value;
-  //   var title = titleInput.value;
-  //   if (text && title) {
-  //     newPostForCurrentUser(title, text).then(function() {
-  //       myPostsMenuButton.click();
-  //     });
-  //     messageInput.value = '';
-  //     titleInput.value = '';
-  //   }
-  // };
+    toggleSignInOutButtons();
 
-  // Bind menu buttons.
-  // recentMenuButton.onclick = function() {
-  //   showSection(recentPostsSection, recentMenuButton);
-  // };
-  // myPostsMenuButton.onclick = function() {
-  //   showSection(userPostsSection, myPostsMenuButton);
-  // };
-  // myTopPostsMenuButton.onclick = function() {
-  //   showSection(topUserPostsSection, myTopPostsMenuButton);
-  // };
-  // addButton.onclick = function() {
-  //   showSection(addPost);
-  //   messageInput.value = '';
-  //   titleInput.value = '';
-  // };
-  // recentMenuButton.onclick();
 }, false);
 
+function toggleSignInOutButtons()
+{
+    if( currentUser ){
+        document.getElementById('sign-out-button').style.display = 'block';
+        document.getElementById('sign-in-button').style.display = 'none';
+    }else{
+        document.getElementById('sign-out-button').style.display = 'none';
+        document.getElementById('sign-in-button').style.display = 'block';
+    }
+
+}
 
 var currentSectionID = 'games-schedule';
 function navigateTo( id )
 {
     console.log( 'go to page: ' + id );
-    document.getElementById( 'navbar-main' ).style.display = 'block';
+    document.getElementById( 'navbar-main' ).classList.add( "fixed-bottom" );
     document.getElementById( currentSectionID ).style.display = 'none';
     document.getElementById( id ).style.display = 'block';
     currentSectionID = id;
@@ -225,23 +205,38 @@ function goToMessagesPage()
 {
     
     navigateTo( 'chat-messages' );
-    document.getElementById( 'navbar-main' ).style.display = 'none';
+    document.getElementById( 'navbar-main' ).classList.remove( "fixed-bottom" );
 
     if( currentUser ) // SIGNED IN
     {
-        document.getElementById( 'message-input-bar' ).style.display = 'inline-flex';
-        document.getElementById('sign-in-button').style.display = 'none';
-        document.getElementById('sign-out-button').style.display = 'block';
-        document.getElementById( 'username' ).innerHTML = currentUser.displayName;
+        ShowSignedInPage();
 
     }else{ // SIGNED OUT
 
-      document.getElementById( 'message-input-bar' ).style.display = 'none';
-      document.getElementById('sign-out-button').style.display = 'none';
-      document.getElementById('sign-in-button').style.display = 'block';
-      document.getElementById( 'username' ).innerHTML = '';
-      
+      ShowSignedOutPage();
 
     }
+}
+
+function ShowSignedInPage()
+{
+    console.log( 'ShowSignedInPage' );
+    document.getElementById( 'signed-out-text' ).style.display = 'none';
+    document.getElementById( 'message-input-bar' ).style.display = 'inline-flex';
+    toggleSignInOutButtons();
+    // document.getElementById( 'username' ).innerHTML = currentUser.displayName;
+}
+
+function ShowSignedOutPage()
+{
+    console.log( 'ShowSignedOutPage' );
+    vm.messagesToShow = [];
+    document.getElementById( 'message-input-bar' ).style.display = 'none';
+    toggleSignInOutButtons();
+    // document.getElementById( 'username' ).innerHTML = '';
+    document.getElementById( 'signed-out-text' ).style.display = 'block';
+    document.getElementById( 'navbar-main' ).st
+
+
 }
 

@@ -37,11 +37,30 @@
 
     <body>
 
+                <!-- NAV MENU -->
+                <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar-main">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#games-schedule" onclick="navigateTo('games-schedule')" >SCHEDULE</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#game-page-full" onclick="navigateTo('game-page-full')">MAP</a>
+                            </li>
+                            <li class="nav-item" id='nav-messages-button'>
+                                <a class="nav-link" href="#chat-messages" onclick="goToMessagesPage()">MESSAGES</a>
+                            </li>
+                            <li class="nav-item">
+                                <button id="sign-in-button">Sign in</button>
+                                <button id="sign-out-button">Sign out</button>
+                            </li>
+                        </ul>
+                    </nav>
+
         <div class="container">
 
 
         <section id="chat-messages">
-            <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <!-- <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
                 <table><tr><td><h5 id="username"></h5></td></tr></table>
                 
 
@@ -52,14 +71,14 @@
                     </li>
                     
                 </ul>
-            </nav>
+            </nav> -->
 
             <div class="alert alert-danger" role="alert" id="error-text">
                 </div>
 
-            <div class="alert alert-light" role="alert" id="signed-out-text">
-                    Please sign in to see chat messages.
-                  </div>
+                <div class="alert alert-light" role="alert" id="signed-out-text">
+                        Please sign in to see chat messages.
+                      </div>
 
             <div id="chat-signed-in-content">
 
@@ -219,21 +238,7 @@
 
 
 
-        <!-- FOOTER MENU -->
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar-main">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#games-schedule" onclick="navigateTo('games-schedule')" >SCHEDULE</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#game-page-full" onclick="navigateTo('game-page-full')">MAP</a>
-                </li>
-                <li class="nav-item" id='nav-messages-button'>
-                    <a class="nav-link" href="#chat-messages" onclick="goToMessagesPage()">MESSAGES</a>
-                </li>
-            
-            </ul>
-        </nav>
+
 
 
   
