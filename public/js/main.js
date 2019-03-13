@@ -108,7 +108,7 @@ function onAuthStateChanged( user ) {
     ShowSignedInPage();
 
     writeUserData( user.uid, user.displayName, user.email, user.photoURL );
-    GetPosts();
+    // GetPosts();
 
   } else {
     // Set currentUID to null.
@@ -169,6 +169,10 @@ function writeUserData( userId, name, email, imageUrl ) {
 
 // Bindings on load.
 window.addEventListener( 'load', function() {
+  
+    vm.gamesToShow = localGameData.games;
+    console.log( vm.gamesToShow );
+
 
     signInButton.addEventListener( 'click', GoogleSignIn );
     signOutButton.addEventListener( 'click', GoogleSignOut );
@@ -176,6 +180,7 @@ window.addEventListener( 'load', function() {
     firebase.auth().onAuthStateChanged(onAuthStateChanged);
 
     toggleSignInOutButtons();
+
 
 }, false);
 

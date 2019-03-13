@@ -36,25 +36,27 @@
     </head>
 
     <body>
+            <div id="vue-instance">
 
-                <!-- NAV MENU -->
-                <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar-main">
-                        <ul class="navbar-nav">
-                            <li class="nav-item">
-                                <a class="nav-link" href="#games-schedule" onclick="navigateTo('games-schedule')" >SCHEDULE</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#game-page-full" onclick="navigateTo('game-page-full')">MAP</a>
-                            </li>
-                            <li class="nav-item" id='nav-messages-button'>
-                                <a class="nav-link" href="#chat-messages" onclick="goToMessagesPage()">MESSAGES</a>
-                            </li>
-                            <li class="nav-item">
-                                <button id="sign-in-button">Sign in</button>
-                                <button id="sign-out-button">Sign out</button>
-                            </li>
-                        </ul>
-                    </nav>
+
+        <!-- NAV MENU -->
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar-main">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#games-schedule" onclick="navigateTo('games-schedule')" >SCHEDULE</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#game-page-full" onclick="navigateTo('game-page-full')">MAP</a>
+                </li>
+                <li class="nav-item" id='nav-messages-button'>
+                    <a class="nav-link" href="#chat-messages" onclick="goToMessagesPage()">MESSAGES</a>
+                </li>
+                <li class="nav-item">
+                    <button id="sign-in-button">Sign in</button>
+                    <button id="sign-out-button">Sign out</button>
+                </li>
+            </ul>
+        </nav>
 
         <div class="container">
 
@@ -82,7 +84,6 @@
 
             <div id="chat-signed-in-content">
 
-                <div id="vue-instance">
                     <div v-for="msg in messagesToShow">
                         <div class="row message-box">
                             <div class="col-3">
@@ -95,7 +96,6 @@
                         </div>
 
                     </div>
-                </div>
 
                 <div class="row fixed-bottom" id="message-input-bar">
                     <div class="col-9">
@@ -125,7 +125,13 @@
             </div> <!-- header -->
               
             <div class="w3-row">
-                <div class="w3-col m6">
+
+                <div class="w3-col m6" v-for="game in gamesToShow">
+                    <button v-on:click="goToGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn">
+                        {{ game.date }} {{ game.teams }}</button>
+                </div>
+
+                <!-- <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
                         9/01 - U1 and U4</button>
                 </div>
@@ -159,8 +165,8 @@
                 </div>
                 <div class="w3-col m6">
                     <button type="button" class="btn btn-outline-secondary full-width game-btn">
-                        9/29 - U4 and U5</button>
-                </div>
+                        9/29 - U4 and U5</button> 
+                </div>-->
                         
 
 
@@ -191,7 +197,9 @@
                     <div class="d-flex"> 
                     <div id="side-menu">
                         <div class="d-flex flex-column top-buffer-20">
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U1 and U4</button>
+                            <button v-for="game in gamesToShow"  v-on:click="goToGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn-side">
+                                {{ game.date }} {{ game.teams }}</button>
+                            <!-- <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U1 and U4</button>
                             <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U3 and U2</button>
                             <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U5 and U6</button>
                             <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U6 and U1</button>
@@ -199,7 +207,7 @@
                             <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U3 and U5</button>
                             <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U1 and U3</button>
                             <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U2 and U6</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/29 - U4 and U5</button>
+                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/29 - U4 and U5</button> -->
                         </div>
                     </div>
         
@@ -208,19 +216,19 @@
                         <table class="table">
                                 <tr>
                                 <th>DATE</th>
-                                <td>9/01</td>
+                                <td> {{ gameSelected.date }} </td>
                             </tr>
                             <tr>
                                 <th>TEAM</th>
-                                <td>U1 and U4</td>
+                                <td> {{ gameSelected.teams }} </td>
                             </tr>
                             <tr>
                                 <th>LOCATION</th>
-                                <td>AJ Katzenmaier</td>
+                                <td> {{ gameSelected.location }} </td>
                             </tr>
                             <tr>
                                 <th>TIME</th>
-                                <td>9:30 a.m.</td>
+                                <td> {{ gameSelected.time }} </td>
                             </tr>
                         </table>
                         <div class="top-buffer-20 embed-responsive embed-responsive-16by9">
@@ -240,7 +248,7 @@
 
 
 
-
+</div><!-- vue -->
   
 
         <script src="https://www.gstatic.com/firebasejs/5.8.5/firebase.js"></script>
@@ -257,8 +265,8 @@
             firebase.initializeApp(config);
         </script>
 
+        <script src="js/game-data.js"></script>
         <script src="js/vue-instance.js"></script>
-        <!-- <script src="js/internal.js"></script> -->
         <script src="js/main.js"></script>
 
 
