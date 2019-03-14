@@ -16,6 +16,16 @@ let gameSection = document.getElementById( 'game-section' );
 let messagesSection = document.getElementById( 'messages-section' );
 let pageSections = [ scheduleSection, gameSection, messagesSection ];
 
+let allPostsTab = document.getElementById( 'all-posts-tab' );
+let gamePostsTab = document.getElementById( 'game-posts-tab' );
+let allPostsContent = document.getElementById( 'all-posts-content' );
+let gamePostsContent = document.getElementById( 'game-posts-content' );
+
+let allPostsDBRef = null; 
+let gamePostsDBRef = null; 
+
+
+
 
 
 window.addEventListener( 'load', function() {
@@ -24,9 +34,29 @@ window.addEventListener( 'load', function() {
     signOutButton.addEventListener( 'click', GoogleSignOut );
     firebase.auth().onAuthStateChanged(onAuthStateChanged);
 
-    scheduleBtn.addEventListener( 'click', function(){ showSection( scheduleSection ); } );
-    gameBtn.addEventListener( 'click', function(){ showSection( gameSection ); } );
-    messagesBtn.addEventListener( 'click', function(){ showSection( messagesSection ); } );
+    scheduleBtn.addEventListener( 'click', function(){ 
+        showSection( scheduleSection );
+        stickNavBarToBottom( true );
+     } );
+    gameBtn.addEventListener( 'click', function(){ 
+        showSection( gameSection );
+        stickNavBarToBottom( true );
+     } );
+    messagesBtn.addEventListener( 'click', function(){ 
+        showSection( messagesSection );
+        stickNavBarToBottom( false );
+        selectMessagesTab();
+     } );
+
+     allPostsTab.addEventListener( 'click', function(){
+        getAllPosts();
+        showAllPosts();
+     }  );
+     gamePostsTab.addEventListener( 'click', function(){
+         getGamePosts();
+         showGamePosts();
+     } );
+
 
 }, false);
 
@@ -36,7 +66,6 @@ function initialize()
     vm.allGames = localGameData.games;
     // console.log( vm.allGames );
     showSection( scheduleSection );
-    
 }
 
 function showSection( sectionToShow )
@@ -44,12 +73,6 @@ function showSection( sectionToShow )
     pageSections.forEach( section => { section.style.display = 'none'; } )
     sectionToShow.style.display = 'block';
 }
-
-function showSelectedGame()
-{
-
-}
-
 
 function toggleSignInOutButtons()
 {
@@ -59,10 +82,95 @@ function toggleSignInOutButtons()
         signOutButton.style.display = 'none';
     }else{
         console.log( 'show SIGN OUT' );
-        signOutButton.style.display = 'none';
-        signInButton.style.display = 'block';
+        signOutButton.style.display = 'block';
+        signInButton.style.display = 'none';
     }
 }
+
+function stickNavBarToBottom( toBottom )
+{
+    navBar.classList.remove( 'fixed-bottom' );
+    if( toBottom ) {
+        navBar.classList.add( 'fixed-bottom' );
+    }
+}
+
+
+function selectMessagesTab()
+{
+    if( vm.gameSelected.id != undefined ){
+        getGamePosts();
+        showGamePosts();
+    }else{
+        getAllPosts();
+        showAllPosts();
+    }
+}
+
+function getAllPosts()
+{
+    if( allPostsDBRef == null )
+    {
+        allPostsDBRef = firebase.database().ref( '/posts/' );
+        allPostsDBRef.on( 'value', function(snapshot) {
+            updateAllPosts( snapshot );
+        });
+    }
+}
+
+function updateAllPosts( snapshot )
+{
+    console.log( 'all posts snpashot val --> ' + snapshot );
+    vm.allPosts = [];
+    snapshot.forEach( function(childSnapShot){
+        // console.log( childSnapShot.key);
+        // console.log( childSnapShot.val());
+        vm.allPosts.push( childSnapShot.val() );
+    } )
+    
+}
+
+function showAllPosts()
+{
+    console.log( 'show all posts' );
+    gamePostsTab.classList.remove( "active" );
+    allPostsTab.classList.add( "active" );
+    gamePostsContent.style.display = "none";
+    allPostsContent.style.display = 'block'
+}
+
+
+
+function getGamePosts()
+{
+    gamePostsDBRef = firebase.database().ref( '/game-posts/' + vm.gameSelected.id );
+    gamePostsDBRef.on( 'value', function(snapshot) {
+        updateGamePosts( snapshot );
+    });
+
+}
+
+function updateGamePosts( snapshot )
+{
+    console.log( 'game posts snpashot val --> ' + snapshot.length );
+    vm.gamePosts = [];
+    snapshot.forEach( function(childSnapShot){
+        console.log( childSnapShot.key);
+        console.log( childSnapShot.val());
+        vm.gamePosts.push( childSnapShot.val() );
+    } )
+    
+}
+
+function showGamePosts()
+{
+    console.log( 'show game posts' );
+    allPostsTab.classList.remove( "active" );
+    gamePostsTab.classList.add( "active" );
+    allPostsContent.style.display = "none";
+    gamePostsContent.style.display = 'block'
+}
+
 
 
 function GoogleSignIn()
@@ -75,9 +183,7 @@ function GoogleSignIn()
       // The signed-in user info.
       var user = result.user;
       console.log( 'result user ' + result.user );
-      // document.getElementById( 'username' ).innerHTML = result.user.displayName;
 
-      // ...
     }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
@@ -133,68 +239,18 @@ function onAuthStateChanged( user ) {
           return;
       }
   
+      console.log( 'ASSIGN USER' );
       vm.currentUser = user;
-      ShowSignedInPage();
-  
       writeUserData( user.uid, user.displayName, user.email, user.photoURL );
-      GetAllPosts();
   
     } else {
-      // Set currentUID to null.
       vm.currentUser = null;
-      // Display the splash page where you can sign-in.
       console.log( 'user null' );
-  
     }
   }
   
 
 
-function GetAllPosts()
-{
-      let allPosts = firebase.database().ref( '/posts/' );
-      allPosts.on( 'value', function(snapshot) {
-          updateAllPosts( snapshot );
-    });
-}
-
-function updateAllPosts( snapshot )
-{
-    console.log( 'all posts snpashot val --> ' + snapshot );
-    vm.allPosts = [];
-    snapshot.forEach( function(childSnapShot){
-        // console.log( childSnapShot.key);
-        // console.log( childSnapShot.val());
-        vm.allPosts.push( childSnapShot.val() );
-    } )
-    
-}
-
-function GetGamePosts()
-{
-    console.log( 'GetGamePosts ' + vm.gameSelected );
-    if( vm.gameSelected.id == undefined )
-    {
-        console.log( 'no game selected' );
-        return;
-    }
-    let gamePosts = firebase.database().ref( '/game-posts/' + vm.gameSelected.id );
-    gamePosts.on( 'value', function(snapshot) {
-      updateGamePosts( snapshot );
-    });
-}
-
-function updateGamePosts( snapshot )
-{
-    console.log( 'game posts snpashot val --> ' + snapshot );
-    vm.gamePosts = [];
-    snapshot.forEach( function(childSnapShot){
-        // console.log( childSnapShot.key);
-        // console.log( childSnapShot.val());
-        vm.gamePosts.push( childSnapShot.val() );
-    } )
-    
-}
 
 
 
@@ -263,55 +319,38 @@ function writeUserData( userId, name, email, imageUrl ) {
 
 
 
-// function goToMessagesPage()
+// function ShowSignedInPage()
 // {
+//     console.log( 'ShowSignedInPage' );
+//     document.getElementById( 'signed-out-text' ).style.display = 'none';
+//     // toggleSignInOutButtons();
+//     document.getElementById( 'chat-signed-in-content' ).style.display = 'block';
     
-//     navigateTo( 'chat-messages' );
-//     document.getElementById( 'navbar-main' ).classList.remove( "fixed-bottom" );
-
-//     if( currentUser ) // SIGNED IN
+//     if( vm.gameSelected.id != undefined )
 //     {
-//         ShowSignedInPage();
+//         console.log( 'game selected: ' + vm.gameSelected.id );
+//         document.getElementById( 'message-input-bar' ).style.display = 'inline-flex';
+//         document.getElementById( 'game-posts' ).classList.add( "active" );
+//         document.getElementById( 'all-posts' ).classList.remove( "active" );
+//     }else{
+//         document.getElementById( 'message-input-bar' ).style.display = 'none';
+//         document.getElementById( 'all-posts' ).classList.add( "active" );
+//         document.getElementById( 'game-posts' ).classList.remove( "active" );
 
-//     }else{ // SIGNED OUT
-
-//       ShowSignedOutPage();
 
 //     }
 // }
 
-function ShowSignedInPage()
-{
-    console.log( 'ShowSignedInPage' );
-    document.getElementById( 'signed-out-text' ).style.display = 'none';
-    // toggleSignInOutButtons();
-    document.getElementById( 'chat-signed-in-content' ).style.display = 'block';
-    
-    if( vm.gameSelected.id != undefined )
-    {
-        console.log( 'game selected: ' + vm.gameSelected.id );
-        document.getElementById( 'message-input-bar' ).style.display = 'inline-flex';
-        document.getElementById( 'game-posts' ).classList.add( "active" );
-        document.getElementById( 'all-posts' ).classList.remove( "active" );
-    }else{
-        document.getElementById( 'message-input-bar' ).style.display = 'none';
-        document.getElementById( 'all-posts' ).classList.add( "active" );
-        document.getElementById( 'game-posts' ).classList.remove( "active" );
+// function ShowSignedOutPage()
+// {
+//     console.log( 'ShowSignedOutPage' );
+//     vm.messagesToShow = [];
+//     document.getElementById( 'message-input-bar' ).style.display = 'none';
+//     // toggleSignInOutButtons();
+//     document.getElementById( 'signed-out-text' ).style.display = 'block';
+//     document.getElementById( 'chat-signed-in-content' ).style.display = 'none';
 
-
-    }
-}
-
-function ShowSignedOutPage()
-{
-    console.log( 'ShowSignedOutPage' );
-    vm.messagesToShow = [];
-    document.getElementById( 'message-input-bar' ).style.display = 'none';
-    // toggleSignInOutButtons();
-    document.getElementById( 'signed-out-text' ).style.display = 'block';
-    document.getElementById( 'chat-signed-in-content' ).style.display = 'none';
-
-}
+// }
 
 
 

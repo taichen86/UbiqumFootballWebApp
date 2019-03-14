@@ -40,7 +40,7 @@
 
 
         <!-- NAV MENU -->
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark" id="navbar">
             <ul class="navbar-nav">
                 <li class="nav-item" id="nav-schedule">
                     <a class="nav-link" href="#games-schedule" >SCHEDULE</a>
@@ -71,16 +71,29 @@
                         Please sign in to see chat messages.
                       </div>
 
-            <div id="chat-signed-in-content" v-if="currentUser">
+            <div id="chat-signed-in-content" v-show="currentUser">
+
+                    <!-- <ul class="nav nav-tabs">
+                        <li><a data-toggle="tab" href="#all-posts" id="all-posts-tab">ALL</a></li>
+                        <li><a data-toggle="tab" href="#game-posts" id="game-posts-tab">Game</a></li>
+                    </ul> -->
 
                     <ul class="nav nav-tabs">
-                        <li><a data-toggle="tab" href="#all-posts">ALL</a></li>
-                        <li><a data-toggle="tab" href="#game-posts">Game</a></li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link active" href="#">Active</a>
+                        </li> -->
+                        <li class="nav-item">
+                            <a id="all-posts-tab" class="nav-link" href="#">ALL POSTS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="game-posts-tab" class="nav-link" href="#">GAME POSTS</a>
+                        </li>
                     </ul>
-                        
-                          <div class="tab-content">
-                            <div id="all-posts" class="tab-pane fade show">
-                              <div v-for="post in allPosts">
+                    
+                        <div class="tab-content">
+                            <div id="all-posts-content">
+                                    ALL POSTS
+                                <div v-for="post in allPosts">
                                     <div class="row message-box">
                                         <div class="col-3">
                                             <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
@@ -93,19 +106,28 @@
                                 </div>                            
                             </div>
 
-                            <div id="game-posts" class="tab-pane fade show">
-                              <div v-for="post in gamePosts">
-                                  game posts
-                                    <div class="row message-box">
-                                        <div class="col-3">
-                                            <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
-                                        </div>
-                                        <div class="col-9">
-                                            <h6 class="font-weight-bold"> {{ post.author }} </h6>
-                                            <h5> {{ post.body }} </h5>
-                                        </div>
-                                    </div>
-                                </div>                             
+                            <div id="game-posts-content">
+                                    GAME POSTS
+                                <div v-if="gameSelected.id != undefined">
+                                    game selcted : {{ gameSelected.id }}
+                                        <div v-for="post in gamePosts">
+                                                <div class="row message-box">
+                                                    <div class="col-3">
+                                                        <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
+                                                    </div>
+                                                    <div class="col-9">
+                                                        <h6 class="font-weight-bold"> {{ post.author }} </h6>
+                                                        <h5> {{ post.body }} </h5>
+                                                    </div>
+                                                </div>
+                                            </div>  
+                                </div>
+
+                                <div v-else>
+                                    NO GAME SELECTED {{ gameSelected.id }}
+                                </div>
+
+                                                         
                             </div>
                         
                 
@@ -113,7 +135,7 @@
 
 
 
-                <div class="row fixed-bottom" id="message-input-bar" v-if="currentUser">
+                <div class="row fixed-bottom" id="message-input-bar" v-if="currentUser && gameSelected.id != undefined">
                     <div class="col-9">
                         <input type="text" id="message-input" placeholder="Type a message" />
                     </div>
@@ -144,7 +166,7 @@
             <div class="w3-row">
 
                 <div class="w3-col m6" v-for="game in allGames">
-                    <button v-on:click="selectGame( game.id )" v-bind:class="[gameSelected.id == game.id ? active : '']" type="button" class="btn btn-outline-secondary full-width game-btn">
+                    <button v-on:click="selectGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn">
                         {{ game.date }} {{ game.teams }}</button>
                 </div>
 
