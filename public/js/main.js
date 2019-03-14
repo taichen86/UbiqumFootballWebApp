@@ -37,15 +37,18 @@ window.addEventListener( 'load', function() {
     scheduleBtn.addEventListener( 'click', function(){ 
         showSection( scheduleSection );
         stickNavBarToBottom( true );
+        adjustNavOffsetSpacing();
      } );
     gameBtn.addEventListener( 'click', function(){ 
         showSection( gameSection );
         stickNavBarToBottom( true );
+        adjustNavOffsetSpacing();
      } );
     messagesBtn.addEventListener( 'click', function(){ 
         showSection( messagesSection );
         stickNavBarToBottom( false );
         selectMessagesTab();
+        adjustNavOffsetSpacing();
      } );
 
      allPostsTab.addEventListener( 'click', function(){
@@ -66,6 +69,7 @@ function initialize()
     vm.allGames = localGameData.games;
     // console.log( vm.allGames );
     showSection( scheduleSection );
+    stickNavBarToBottom( true );
 }
 
 function showSection( sectionToShow )
@@ -76,7 +80,7 @@ function showSection( sectionToShow )
 
 function toggleSignInOutButtons()
 {
-    if( vm.currentUser ){
+    if( vm.currentUser == null ){
         console.log( 'show SIGN IN' );
         signInButton.style.display = 'block';
         signOutButton.style.display = 'none';
@@ -89,12 +93,23 @@ function toggleSignInOutButtons()
 
 function stickNavBarToBottom( toBottom )
 {
-    navBar.classList.remove( 'fixed-bottom' );
     if( toBottom ) {
+        navBar.classList.remove( 'fixed-top' );
         navBar.classList.add( 'fixed-bottom' );
+    }else{
+        navBar.classList.remove( 'fixed-bottom' );
+        navBar.classList.add( 'fixed-top' );
     }
 }
 
+
+function adjustNavOffsetSpacing()
+{
+    Array.from( document.getElementsByClassName( 'nav-offset-spacing' ) ).forEach( element => {
+        element.style.height = navBar.offsetHeight + 'px';
+    })
+    
+}
 
 function selectMessagesTab()
 {
@@ -206,18 +221,14 @@ function GoogleSignIn()
 function GoogleSignOut()
 {
     console.log( 'google sign out...' );
-    ShowSignedOutPage();
-
     firebase.auth().signOut().then(function() {
       // Sign-out successful.
       console.log( 'sign out successful' );
-
     }).catch(function(error) {
       // An error happened.
       console.log( 'sign out error ' + error );
       document.getElementById( 'error-text' ).innerHTML = error;
       document.getElementById( 'error-text' ).style.display = 'block';
-
     });
 }
 
@@ -226,8 +237,10 @@ function GoogleSignOut()
  */
 function onAuthStateChanged( user ) {
     console.log( 'onAuthStateChanged ' + user );
+    console.log( 'current ' + vm.currentUser );
     document.getElementById( 'error-text' ).style.display = 'none';
-    toggleSignInOutButtons();
+
+
 
   
     if( user ) 
@@ -244,9 +257,11 @@ function onAuthStateChanged( user ) {
       writeUserData( user.uid, user.displayName, user.email, user.photoURL );
   
     } else {
-      vm.currentUser = null;
       console.log( 'user null' );
     }
+
+    toggleSignInOutButtons();
+
   }
   
 
