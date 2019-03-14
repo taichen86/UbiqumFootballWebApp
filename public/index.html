@@ -40,16 +40,16 @@
 
 
         <!-- NAV MENU -->
-        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar-main">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-bottom" id="navbar">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" href="#games-schedule" onclick="navigateTo('games-schedule')" >SCHEDULE</a>
+                <li class="nav-item" id="nav-schedule">
+                    <a class="nav-link" href="#games-schedule" >SCHEDULE</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#game-page-full" onclick="navigateTo('game-page-full')">MAP</a>
+                <li class="nav-item" id="nav-game">
+                    <a class="nav-link" href="#game-page-full">GAME</a>
                 </li>
-                <li class="nav-item" id='nav-messages-button'>
-                    <a class="nav-link" href="#chat-messages" onclick="goToMessagesPage()">MESSAGES</a>
+                <li class="nav-item" id='nav-messages'>
+                    <a class="nav-link" href="#chat-messages">MESSAGES</a>
                 </li>
                 <li class="nav-item">
                     <button id="sign-in-button">Sign in</button>
@@ -61,43 +61,59 @@
         <div class="container">
 
 
-        <section id="chat-messages">
-            <!-- <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-                <table><tr><td><h5 id="username"></h5></td></tr></table>
-                
-
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <button id="sign-in-button">Sign in</button>
-                        <button id="sign-out-button">Sign out</button>
-                    </li>
-                    
-                </ul>
-            </nav> -->
+        <!-- MESSAGES MENU -->
+        <section id="messages-section">
 
             <div class="alert alert-danger" role="alert" id="error-text">
                 </div>
 
-                <div class="alert alert-light" role="alert" id="signed-out-text">
+                <div class="alert alert-light" role="alert" id="signed-out-text" v-if="currentUser == null">
                         Please sign in to see chat messages.
                       </div>
 
-            <div id="chat-signed-in-content">
+            <div id="chat-signed-in-content" v-if="currentUser">
 
-                    <div v-for="msg in messagesToShow">
-                        <div class="row message-box">
-                            <div class="col-3">
-                                <img v-bind:src=msg.authorPic alt="avatar" class="full-width rounded-circle">
+                    <ul class="nav nav-tabs">
+                        <li><a data-toggle="tab" href="#all-posts">ALL</a></li>
+                        <li><a data-toggle="tab" href="#game-posts">Game</a></li>
+                    </ul>
+                        
+                          <div class="tab-content">
+                            <div id="all-posts" class="tab-pane fade show">
+                              <div v-for="post in allPosts">
+                                    <div class="row message-box">
+                                        <div class="col-3">
+                                            <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
+                                        </div>
+                                        <div class="col-9">
+                                            <h6 class="font-weight-bold"> {{ post.author }} </h6>
+                                            <h5> {{ post.body }} </h5>
+                                        </div>
+                                    </div>
+                                </div>                            
                             </div>
-                            <div class="col-9">
-                                <h6 class="font-weight-bold"> {{ msg.author }} </h6>
-                                <h5> {{ msg.body }} </h5>
+
+                            <div id="game-posts" class="tab-pane fade show">
+                              <div v-for="post in gamePosts">
+                                  game posts
+                                    <div class="row message-box">
+                                        <div class="col-3">
+                                            <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
+                                        </div>
+                                        <div class="col-9">
+                                            <h6 class="font-weight-bold"> {{ post.author }} </h6>
+                                            <h5> {{ post.body }} </h5>
+                                        </div>
+                                    </div>
+                                </div>                             
                             </div>
-                        </div>
+                        
+                
+                          </div>
 
-                    </div>
 
-                <div class="row fixed-bottom" id="message-input-bar">
+
+                <div class="row fixed-bottom" id="message-input-bar" v-if="currentUser">
                     <div class="col-9">
                         <input type="text" id="message-input" placeholder="Type a message" />
                     </div>
@@ -110,7 +126,8 @@
         </section>
 
 
-        <section id="games-schedule">
+        <!-- SCHEDULE MENU -->
+        <section id="schedule-section">
 
             <div data-role="header">
                 <div class="row top-buffer-20">
@@ -122,12 +139,12 @@
                             <div class="title-text">North Youth Side League</div></td></tr></table>
                     </div>
                 </div>
-            </div> <!-- header -->
+            </div> 
               
             <div class="w3-row">
 
                 <div class="w3-col m6" v-for="game in allGames">
-                    <button v-on:click="goToGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn">
+                    <button v-on:click="selectGame( game.id )" v-bind:class="[gameSelected.id == game.id ? active : '']" type="button" class="btn btn-outline-secondary full-width game-btn">
                         {{ game.date }} {{ game.teams }}</button>
                 </div>
 
@@ -174,11 +191,12 @@
 
             <div style="height: 200px;">spacing</div>
 
-        </section><!-- games-schedule PAGE-->
+        </section>
 
 
 
-        <section id="game-page-full">
+        <!-- GAME MENU -->
+        <section id="game-section">
 
             <div data-role="header">
                 <div class="row top-buffer-20">
@@ -190,52 +208,55 @@
                             <div class="title-text">North Youth Side League</div></td></tr></table>
                     </div>
                 </div>
-            </div><!-- header -->
+            </div>
 
             <div class="top-buffer-20">
 
-                    <div class="d-flex"> 
-                    <div id="side-menu">
-                        <div class="d-flex flex-column top-buffer-20">
-                            <button v-for="game in allGames"  v-on:click="goToGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn-side">
-                                {{ game.date }} {{ game.teams }}</button>
-                            <!-- <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U1 and U4</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/01 - U3 and U2</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U5 and U6</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/08 - U6 and U1</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U2 and U4</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/15 - U3 and U5</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U1 and U3</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/22 - U2 and U6</button>
-                            <button type="button" class="btn btn-outline-secondary full-width game-btn-side">9/29 - U4 and U5</button> -->
-                        </div>
-                    </div>
+                <div v-if="gameSelected.id != undefined">
+                        <div class="d-flex"> 
+                                <div id="side-menu">
+                                    <div class="d-flex flex-column top-buffer-20">
+                                        <button v-for="game in allGames"  v-on:click="selectGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn-side">
+                                            {{ game.date }} {{ game.teams }}</button>
+                                    </div>
+                                </div>
+                                <div id="game-info-table">
+                                        <table class="table">
+                                                <tr>
+                                                <th>DATE</th>
+                                                <td> {{ gameSelected.date }} </td>
+                                            </tr>
+                                            <tr>
+                                                <th>TEAM</th>
+                                                <td> {{ gameSelected.teams }} </td>
+                                            </tr>
+                                            <tr>
+                                                <th>LOCATION</th>
+                                                <td> {{ gameSelected.location }} </td>
+                                            </tr>
+                                            <tr>
+                                                <th>TIME</th>
+                                                <td> {{ gameSelected.time }} </td>
+                                            </tr>
+                                        </table>
+                                        <div class="top-buffer-20 embed-responsive embed-responsive-16by9">
+                                            <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448552.6749552238!2d-88.49171896625712!3d42.28242524926708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880f932fbc6ba7cd%3A0xcf2bbe275c6da815!2sA+J+Katzenmaier+Elementary+School!5e0!3m2!1sen!2ses!4v1551952624949" allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                </div>      
+
+
+
+                </div>
+
+                <div v-else>
+                    NO GAME SELECTED
+
+                </div>
+
+                   
         
-                    <div id="game-info-table">
-                        <!-- <h3>Game Information</h3> -->
-                        <table class="table">
-                                <tr>
-                                <th>DATE</th>
-                                <td> {{ gameSelected.date }} </td>
-                            </tr>
-                            <tr>
-                                <th>TEAM</th>
-                                <td> {{ gameSelected.teams }} </td>
-                            </tr>
-                            <tr>
-                                <th>LOCATION</th>
-                                <td> {{ gameSelected.location }} </td>
-                            </tr>
-                            <tr>
-                                <th>TIME</th>
-                                <td> {{ gameSelected.time }} </td>
-                            </tr>
-                        </table>
-                        <div class="top-buffer-20 embed-responsive embed-responsive-16by9">
-                            <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d448552.6749552238!2d-88.49171896625712!3d42.28242524926708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x880f932fbc6ba7cd%3A0xcf2bbe275c6da815!2sA+J+Katzenmaier+Elementary+School!5e0!3m2!1sen!2ses!4v1551952624949" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                </div>      
+                  
 
             </div>
         </section> <!-- game-page-full -->

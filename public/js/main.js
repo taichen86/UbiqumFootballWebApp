@@ -1,8 +1,69 @@
-var currentUser;
+// var currentUser = null;
+
+let navBar = document.getElementById( 'navbar' );
 
 let signInButton = document.getElementById( 'sign-in-button' );
 let signOutButton = document.getElementById( 'sign-out-button' );
-let navMessagesButton = document.getElementById( 'nav-messages-button' );
+
+let scheduleBtn = document.getElementById( 'nav-schedule' );
+let gameBtn = document.getElementById( 'nav-game' );
+let messagesBtn = document.getElementById( 'nav-messages' );
+let allNavBtns = [ scheduleBtn, gameBtn, messagesBtn ];
+
+
+let scheduleSection = document.getElementById( 'schedule-section' );
+let gameSection = document.getElementById( 'game-section' );
+let messagesSection = document.getElementById( 'messages-section' );
+let pageSections = [ scheduleSection, gameSection, messagesSection ];
+
+
+
+window.addEventListener( 'load', function() {
+  
+    signInButton.addEventListener( 'click', GoogleSignIn );
+    signOutButton.addEventListener( 'click', GoogleSignOut );
+    firebase.auth().onAuthStateChanged(onAuthStateChanged);
+
+    scheduleBtn.addEventListener( 'click', function(){ showSection( scheduleSection ); } );
+    gameBtn.addEventListener( 'click', function(){ showSection( gameSection ); } );
+    messagesBtn.addEventListener( 'click', function(){ showSection( messagesSection ); } );
+
+}, false);
+
+
+function initialize()
+{
+    vm.allGames = localGameData.games;
+    // console.log( vm.allGames );
+    showSection( scheduleSection );
+    
+}
+
+function showSection( sectionToShow )
+{
+    pageSections.forEach( section => { section.style.display = 'none'; } )
+    sectionToShow.style.display = 'block';
+}
+
+function showSelectedGame()
+{
+
+}
+
+
+function toggleSignInOutButtons()
+{
+    if( vm.currentUser ){
+        console.log( 'show SIGN IN' );
+        signInButton.style.display = 'block';
+        signOutButton.style.display = 'none';
+    }else{
+        console.log( 'show SIGN OUT' );
+        signOutButton.style.display = 'none';
+        signInButton.style.display = 'block';
+    }
+}
+
 
 function GoogleSignIn()
 {
@@ -54,11 +115,44 @@ function GoogleSignOut()
     });
 }
 
+/**
+ * Triggers every time there is a change in the Firebase auth state (i.e. user signed-in or user signed out).
+ */
+function onAuthStateChanged( user ) {
+    console.log( 'onAuthStateChanged ' + user );
+    document.getElementById( 'error-text' ).style.display = 'none';
+    toggleSignInOutButtons();
 
-function GetPosts()
+  
+    if( user ) 
+    {
+  
+    // We ignore token refresh events.
+      if( vm.currentUser && user.uid === vm.currentUser.uid ){
+          console.log( 'same user' );
+          return;
+      }
+  
+      vm.currentUser = user;
+      ShowSignedInPage();
+  
+      writeUserData( user.uid, user.displayName, user.email, user.photoURL );
+      GetAllPosts();
+  
+    } else {
+      // Set currentUID to null.
+      vm.currentUser = null;
+      // Display the splash page where you can sign-in.
+      console.log( 'user null' );
+  
+    }
+  }
+  
+
+
+function GetAllPosts()
 {
-    console.log( 'get posts' );
-      let allPosts = firebase.database().ref('posts');
+      let allPosts = firebase.database().ref( '/posts/' );
       allPosts.on( 'value', function(snapshot) {
           updateAllPosts( snapshot );
     });
@@ -66,15 +160,43 @@ function GetPosts()
 
 function updateAllPosts( snapshot )
 {
-    console.log( 'snpashot val --> ' + snapshot );
-    vm.messagesToShow = [];
+    console.log( 'all posts snpashot val --> ' + snapshot );
+    vm.allPosts = [];
     snapshot.forEach( function(childSnapShot){
-        console.log( childSnapShot.key);
-        console.log( childSnapShot.val());
-        vm.messagesToShow.push( childSnapShot.val() );
+        // console.log( childSnapShot.key);
+        // console.log( childSnapShot.val());
+        vm.allPosts.push( childSnapShot.val() );
     } )
     
 }
+
+function GetGamePosts()
+{
+    console.log( 'GetGamePosts ' + vm.gameSelected );
+    if( vm.gameSelected.id == undefined )
+    {
+        console.log( 'no game selected' );
+        return;
+    }
+    let gamePosts = firebase.database().ref( '/game-posts/' + vm.gameSelected.id );
+    gamePosts.on( 'value', function(snapshot) {
+      updateGamePosts( snapshot );
+    });
+}
+
+function updateGamePosts( snapshot )
+{
+    console.log( 'game posts snpashot val --> ' + snapshot );
+    vm.gamePosts = [];
+    snapshot.forEach( function(childSnapShot){
+        // console.log( childSnapShot.key);
+        // console.log( childSnapShot.val());
+        vm.gamePosts.push( childSnapShot.val() );
+    } )
+    
+}
+
+
 
 
 function writeUserData( userId, name, email, imageUrl) 
@@ -87,51 +209,18 @@ function writeUserData( userId, name, email, imageUrl)
 }
 
 
-/**
- * Triggers every time there is a change in the Firebase auth state (i.e. user signed-in or user signed out).
- */
-function onAuthStateChanged( user ) {
-  console.log( 'onAuthStateChanged ' + user );
-  document.getElementById( 'error-text' ).style.display = 'none';
-  console.log( 'hide error text' );
-
-  if( user ) 
-  {
-
-  // We ignore token refresh events.
-    if( currentUser && user.uid === currentUser.uid ){
-        console.log( 'same user' );
-        return;
-    }
-
-    currentUser = user;
-    ShowSignedInPage();
-
-    writeUserData( user.uid, user.displayName, user.email, user.photoURL );
-    // GetPosts();
-
-  } else {
-    // Set currentUID to null.
-    currentUser = null;
-    // Display the splash page where you can sign-in.
-    console.log( 'user null' );
-    // document.getElementById( 'error-text' ).innerHTML = 'no user found';
-    // document.getElementById( 'error-text' ).style.display = 'block';
-
-  }
-}
 
 
 function PrepareNewPost()
 {
     const message = document.getElementById( 'message-input' ).value;
     console.log( 'post message...' + message );
-    console.log( currentUser );
-    writeNewPost( currentUser.uid, currentUser.displayName, currentUser.photoURL, message , vm.gameSelected.id );
+    console.log( vm.currentUser );
+    writeNewPost( vm.currentUser.uid, vm.currentUser.displayName, vm.currentUser.photoURL, message , vm.gameSelected.id );
     document.getElementById( 'message-input' ).value = '';
 }
 
-function writeNewPost( uid, username, picture, message, gameid ) 
+function writeNewPost( uid, username, picture, message, gameid = '000' ) 
 {
     // A post entry.
     let postData = 
@@ -155,6 +244,7 @@ function writeNewPost( uid, username, picture, message, gameid )
     var updates = {};
     updates['/posts/' + newPostKey] = postData;
     updates['/user-posts/' + uid + '/' + newPostKey] = postData;
+    updates['/game-posts/' + gameid + '/' + newPostKey] = postData;
 
     return firebase.database().ref().update( updates );
 }
@@ -168,70 +258,48 @@ function writeUserData( userId, name, email, imageUrl ) {
   });
 }
 
-// Bindings on load.
-window.addEventListener( 'load', function() {
-  
-    console.log( 'event listner' );
-    vm.allGames = localGameData.games;
-    console.log( vm.allGames );
 
 
-    signInButton.addEventListener( 'click', GoogleSignIn );
-    signOutButton.addEventListener( 'click', GoogleSignOut );
-    // Listen for auth state changes
-    firebase.auth().onAuthStateChanged(onAuthStateChanged);
-
-    toggleSignInOutButtons();
 
 
-}, false);
 
-function toggleSignInOutButtons()
-{
-    if( currentUser ){
-        document.getElementById('sign-out-button').style.display = 'block';
-        document.getElementById('sign-in-button').style.display = 'none';
-    }else{
-        document.getElementById('sign-out-button').style.display = 'none';
-        document.getElementById('sign-in-button').style.display = 'block';
-    }
-
-}
-
-var currentSectionID = 'games-schedule';
-function navigateTo( id )
-{
-    console.log( 'go to page: ' + id );
-    document.getElementById( 'navbar-main' ).classList.add( "fixed-bottom" );
-    document.getElementById( currentSectionID ).style.display = 'none';
-    document.getElementById( id ).style.display = 'block';
-    currentSectionID = id;
-}
-
-function goToMessagesPage()
-{
+// function goToMessagesPage()
+// {
     
-    navigateTo( 'chat-messages' );
-    document.getElementById( 'navbar-main' ).classList.remove( "fixed-bottom" );
+//     navigateTo( 'chat-messages' );
+//     document.getElementById( 'navbar-main' ).classList.remove( "fixed-bottom" );
 
-    if( currentUser ) // SIGNED IN
-    {
-        ShowSignedInPage();
+//     if( currentUser ) // SIGNED IN
+//     {
+//         ShowSignedInPage();
 
-    }else{ // SIGNED OUT
+//     }else{ // SIGNED OUT
 
-      ShowSignedOutPage();
+//       ShowSignedOutPage();
 
-    }
-}
+//     }
+// }
 
 function ShowSignedInPage()
 {
     console.log( 'ShowSignedInPage' );
     document.getElementById( 'signed-out-text' ).style.display = 'none';
-    document.getElementById( 'message-input-bar' ).style.display = 'inline-flex';
-    toggleSignInOutButtons();
-    // document.getElementById( 'username' ).innerHTML = currentUser.displayName;
+    // toggleSignInOutButtons();
+    document.getElementById( 'chat-signed-in-content' ).style.display = 'block';
+    
+    if( vm.gameSelected.id != undefined )
+    {
+        console.log( 'game selected: ' + vm.gameSelected.id );
+        document.getElementById( 'message-input-bar' ).style.display = 'inline-flex';
+        document.getElementById( 'game-posts' ).classList.add( "active" );
+        document.getElementById( 'all-posts' ).classList.remove( "active" );
+    }else{
+        document.getElementById( 'message-input-bar' ).style.display = 'none';
+        document.getElementById( 'all-posts' ).classList.add( "active" );
+        document.getElementById( 'game-posts' ).classList.remove( "active" );
+
+
+    }
 }
 
 function ShowSignedOutPage()
@@ -239,11 +307,13 @@ function ShowSignedOutPage()
     console.log( 'ShowSignedOutPage' );
     vm.messagesToShow = [];
     document.getElementById( 'message-input-bar' ).style.display = 'none';
-    toggleSignInOutButtons();
-    // document.getElementById( 'username' ).innerHTML = '';
+    // toggleSignInOutButtons();
     document.getElementById( 'signed-out-text' ).style.display = 'block';
-    document.getElementById( 'navbar-main' ).st
-
+    document.getElementById( 'chat-signed-in-content' ).style.display = 'none';
 
 }
+
+
+
+initialize();
 

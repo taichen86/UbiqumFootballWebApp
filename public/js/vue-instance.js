@@ -3,29 +3,20 @@ var vm = new Vue({
     el: '#vue-instance',
     data: {
         gameSelected: {},
-        messagesToShow: [],
-        allGames: []
+        allPosts: [],
+        gamePosts: [],
+        allGames: [],
+        currentUser : null
     },
 
     methods: {
-        goToGame: function( id ){
-            console.log( 'go to game ' + id );
-            navigateTo( 'game-page-full' );
+        selectGame: function( id ){
+            console.log( 'select game ' + id );
             this.gameSelected = this.allGames.find( game => { return game.id == id });
             // console.log( 'selected game: ' + this.gameSelected.id );
+            showSection( gameSection );
         }
     },
 
-    // created: function( )
-    // {
-    //     console.log( 'created' );
-    //     this.gamesToShow = localGameData.games;
-    //     console.log( this.gamesToShow );
-    // },
-
-    // mounted: function () {
-    //     console.log( 'mounted' );
-
-    //   }
 
 })
