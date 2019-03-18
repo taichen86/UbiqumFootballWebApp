@@ -41,12 +41,6 @@
     display: none;
 }
 
-#games-schedule{
-
-}
-
-
-
 .chat-profile-pic{
     width: 100%;
 }
@@ -62,9 +56,40 @@
     margin: 4px 0;
 }
 
-#nav-messages-button{
+#navbar{
+    display: none;
 }
 
-/* .nav-offset-spacing{
-    height: 300px;
-} */
+#error-text{
+    display: none;
+}
+
+#messages-section{
+    display: none;
+}
+
+#game-section{
+    display: none;
+}
+
+#schedule-section{
+    display: none;
+}
+
+#sign-in-button{
+    display: none;
+}
+
+#sign-out-button{
+    display: none;
+}
+
+#message-input-bar{
+    background-color: white;
+    padding: 4px 0;
+}
+
+#message-input{
+    width: 100%;
+    margin: 4px;
+}

@@ -63,7 +63,7 @@
 
         <!-- MESSAGES MENU -->
         <section id="messages-section">
-            <div id="top-space" class="nav-offset-spacing">top spacing</div>
+            <div id="top-space" class="nav-offset-spacing"></div>
 
             <div class="alert alert-danger" role="alert" id="error-text">
                 </div>
@@ -85,40 +85,39 @@
                     
                         <div class="tab-content">
                             <div id="all-posts-content">
-                                    ALL POSTS
-                                <div v-for="post in allPosts">
-                                    <div class="row message-box">
-                                        <div class="col-3">
-                                            <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
-                                        </div>
-                                        <div class="col-9">
-                                            <h6 class="font-weight-bold"> {{ post.author }} </h6>
-                                            <h5> {{ post.body }} </h5>
-                                        </div>
+                            <div v-for="post in allPosts">
+                                <div class="row message-box">
+                                    <div class="col-3">
+                                        <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
                                     </div>
-                                </div>                            
-                            </div>
+                                    <div class="col-9">
+                                        <h6 class="font-weight-bold"> {{ post.author }} </h6>
+                                        <h5> {{ post.body }} </h5>
+                                    </div>
+                                </div>
+                            </div>  
+                                              
+                        </div>
 
                             <div id="game-posts-content">
-                                    GAME POSTS
                                 <div v-if="gameSelected.id != undefined">
-                                    game selcted : {{ gameSelected.id }}
-                                        <div v-for="post in gamePosts">
-                                                <div class="row message-box">
-                                                    <div class="col-3">
-                                                        <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
-                                                    </div>
-                                                    <div class="col-9">
-                                                        <h6 class="font-weight-bold"> {{ post.author }} </h6>
-                                                        <h5> {{ post.body }} </h5>
-                                                    </div>
-                                                </div>
-                                            </div>  
-                                </div>
+                                    <div v-for="post in gamePosts">
+                                        <div class="row message-box">
+                                            <div class="col-3">
+                                                <img v-bind:src=post.authorPic alt="avatar" class="full-width rounded-circle">
+                                            </div>
+                                            <div class="col-9">
+                                                <h6 class="font-weight-bold"> {{ post.author }} </h6>
+                                                <h5> {{ post.body }} </h5>
+                                            </div>
+                                        </div>
+                                    </div>  
+                             
+                            </div>
 
-                                <div v-else>
-                                    NO GAME SELECTED {{ gameSelected.id }}
-                                </div>
+                            <div v-else>
+                                NO GAME SELECTED
+                            </div>
 
                                                          
                             </div>
@@ -166,7 +165,7 @@
 
             </div>
 
-            <div class="nav-offset-spacing">bottom spacing</div>
+            <div class="nav-offset-spacing"></div>
 
         </section>
 
@@ -191,7 +190,7 @@
 
                 <div v-if="gameSelected.id != undefined">
                         <div class="d-flex"> 
-                                <div id="side-menu">
+                                <div id="side-menu" class="right-buffer-20">
                                     <div class="d-flex flex-column top-buffer-20">
                                         <button v-for="game in allGames"  v-on:click="selectGame( game.id )" type="button" class="btn btn-outline-secondary full-width game-btn-side">
                                             {{ game.date }} {{ game.teams }}</button>
@@ -236,7 +235,7 @@
                   
 
             </div>
-            <div class="nav-offset-spacing">bottom spacing</div>
+            <div class="nav-offset-spacing"></div>
         </section> <!-- game-page-full -->
 
 
